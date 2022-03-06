@@ -1,0 +1,106 @@
+
+{
+  // 清单版本号，建议使用 版本 2（主流），最新版本 3
+  "manifest_version": 2, 
+  "name": "mdcode", // 插件名称
+  "version": "0.0.1",  // 插件版本
+  // 这里写些废话，举个栗子，‘应产品要求，杀个程序祭天’
+  "description": "This plugin helps you collect articles from various platforms", 
+  // 图标，一般偷懒全部用一个尺寸的也没问题
+  "icons": {
+    "16": "imgs/icon.png",
+    "48": "imgs/icon.png",
+    "128": "imgs/icon.png"
+  },
+  // 会一直常驻的后台JS或后台页面
+	"background":
+	{
+		// 2种指定方式，如果指定JS，那么会自动生成一个背景页
+		// "page": "dist/background.html"
+		"scripts": ["public/background.js"]
+	},
+  // 浏览器右上角图标设置，browser_action、page_action、app必须三选一
+  "browser_action": { //浏览器级别行为，所有页面均生效
+    "default_icon": "imgs/icon.png",//图标的图片
+    "default_title": "mdcode", //鼠标移到图标显示的文字 
+    "default_popup": "dist/popup.html" //单击图标后弹窗页面
+  }, 
+  // "page_action":{ // 页面级别的行为，只在特定页面下生效 
+  //   "default_icon":{
+  //       "24":"images/custom/24x24.png",
+  //       "38":"images/custom/38x38.png"
+  //       },
+  //   "default_popup": "html/popup.html",
+  //   "default_title":"Hello ELSE"
+  // },
+
+  // 定义对页面内容进行操作的脚本，需要直接注入页面的JS
+  "content_scripts": [
+    {
+      // "<all_urls>" 表示匹配所有地址
+      "matches": ["<all_urls>"], // 只在这些站点下 content_scripts会运行
+      // 多个JS按顺序注入
+      "js": [
+        // "public/jquery-1.8.3.js", 
+        "public/content-script.js"
+      ],
+      // JS的注入可以随便一点，但是CSS的注意就要千万小心了，因为一不小心就可能影响全局样式
+      "css": [
+        "public/custom.css", 
+        "dist/styles/modal.css",
+        "dist/styles/setting.css"
+      ],
+      // 代码注入的时间，可选值： "document_start", "document_end", or "document_idle"，最后一个表示页面空闲时，默认document_idle
+      // 默认为 document_idle
+      "run_at": "document_start"
+    }
+  ],
+  // 权限申请，声明插件所需要的权限，这里就是很危险的存在了，想干坏事的你是不是很激动！
+  "permissions": [
+    "contextMenus", // 右键菜单
+    "declarativeContent",
+		"tabs", // 标签
+    "activeTab",
+		"notifications", // 通知
+		"webRequest", // web请求
+		"webRequestBlocking",
+		"storage", // 插件本地存储
+		"http://*/*", // 可以通过executeScript或者insertCSS访问的网站
+		"https://*/*", // 可以通过executeScript或者insertCSS访问的网站
+    "cookies",
+    "management"
+  ],
+  // 可选
+  "author": "sisterAn",
+  // "automation": "...",   
+  // 普通页面能够直接访问的插件资源列表，如果不设置是无法直接访问的
+	"web_accessible_resources": [
+    "public/inject.js", 
+    "dist/*",
+    "imgs/*"
+  ],
+  // 插件主页，这个很重要，不要浪费了这个免费广告位
+	"homepage_url": "https://www.pzijun.cn/",
+  // 覆盖浏览器默认页面
+	// "chrome_url_overrides":
+	// {
+	// 	// 覆盖浏览器默认的新标签页
+	// 	"newtab": "dist/newtab.html"
+	// },
+  // Chrome40以前的插件配置页写法
+	// "options_page": "dist/options.html",
+	// // Chrome40以后的插件配置页写法，如果2个都写，新版Chrome只认后面这一个
+	// "options_ui":
+	// {
+	// 	"page": "dist/options.html",
+	// 	// 添加一些默认的样式，推荐使用
+	// 	"chrome_style": true
+	// },
+	// 向地址栏注册一个关键字以提供搜索建议，只能设置一个关键字
+	// "omnibox": { "keyword" : "go" }
+	// 默认语言
+	// "default_locale": "zh_CN",
+	// // devtools页面入口，注意只能指向一个HTML文件，不能是JS文件
+  // "devtools_page": "dist/devtools-page.html"
+  "content_security_policy": "script-src 'self' https://unpkg.com; object-src 'self'"
+}
